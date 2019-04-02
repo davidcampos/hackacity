@@ -26,7 +26,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-output
 config/configPRIVATE.cfg
 
 # PyInstaller
