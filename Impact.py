@@ -2,8 +2,10 @@ from enum import Enum
 
 
 class Impact(Enum):
-    BLOCKER = -2
-    NEGATIVE = -1
-    NEUTRAL = 0
-    POSITIVE = 1
-    PERFECT = 2
+    BLOCKER = 1
+    NEGATIVE = 2
+    NEUTRAL = 3
+    POSITIVE = 4
+    PERFECT = 5
+
+    NONE = 0
