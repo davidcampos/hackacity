@@ -1,7 +1,7 @@
 import numpy
 import json
 import requests
-
+import progressbar
 import multiprocessing as mp
 
 OCEAN_MAP = []
@@ -43,8 +43,8 @@ if __name__ == "__main__":
     # for lat in numpy.arange(41.131386, 41.208026, 0.0018):
     #     for lon in numpy.arange(-8.712680, -8.558663, 0.0025):
 
-    for lat in numpy.arange(41.131386, 41.208026, 0.0015):
-        for lon in numpy.arange(-8.712680, -8.558663, 0.0015):
+    for lat in numpy.arange(41.140385968610644, 41.18538597598672, 0.0010):
+        for lon in numpy.arange(-8.687680028378963, -8.5601800493896, 0.0010):
             coords.append((lat, lon))
 
     session = requests.Session()
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Step 1: Init multiprocessing.Pool()
     with open("ocean-coordinates", "a") as f:
-        for lat, long in coords:
+        for lat, long in progressbar.progressbar(coords):
             st = "{},{}".format(lat, long)
 
             if st in data:
@@ -65,10 +65,10 @@ if __name__ == "__main__":
                 #b = pool.apply_async(is_ocean, args=(lat,lon,session))
                 b = is_ocean(lat, long, session)
                 data[st] = b
-                print("Found", st, "-", b)
+                #print("Found", st, "-", b)
 
                 if b:
                     f.write(st+"\n")
-                    f.flush()
+        f.flush()
 
 
