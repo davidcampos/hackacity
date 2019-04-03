@@ -65,8 +65,11 @@ def parseCsvFile_POI(filename):
                 headers = row
                 line_count = 1
                 continue
+
+            if int(row[3]) == 0:
+                continue
             try:
-                payload["value"] = float(row[3])
+                payload["value"] = int(row[3])
                 location = {}
                 location["lat"] = row[1]
                 location["lon"] = row[2]
@@ -127,10 +130,16 @@ if __name__ == '__main__':
         else:
             sys.exit(2)
 
+    #print filename
     #filename = "output/IOT_AirQuality_CO.csv"
     index,category,datatype=filename.split("/")[1].split(".")[0].split("_")
+    #sys.exit(0)
     indexSuffix = index.lower()
-    parseCsvFile_POI(filename)
+
+    if index == "POI":
+        parseCsvFile_POI(filename)
+    else:
+        parseCsvFile_IOT(filename)
 
 """
 IOT_AirQuality_CO.csv  IOT_AirQuality_NO2.csv  IOT_AirQuality_O3.csv  IOT_AirQuality_Ox.csv  IOT_AirQuality_PM10.csv  IOT_AirQuality_PM1.csv  IOT_AirQuality_PM25.csv  IOT_NoiseLevelObserved_LAeq.csv
