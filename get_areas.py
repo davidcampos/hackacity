@@ -33,42 +33,42 @@ def request_objects_around_coordinate(lat,long, mapNumber=77):
 
     return r.json()
 
+if __name__ == "__main__":
+    coords = []
+    for lat in numpy.arange(41.131386,41.208026, 0.0018):
+        for lon in numpy.arange(-8.712680,-8.558663, 0.0025):
+            coords.append((lat,lon))
 
-coords = []
-for lat in numpy.arange(41.131386,41.208026, 0.0018):
-    for lon in numpy.arange(-8.712680,-8.558663, 0.0025):
-        coords.append((lat,lon))
+    print("N Cords: ", len(coords))
 
-print("N Cords: ", len(coords))
+    ## Numbers
+    ## Areas-verdes: {'map_number': 77, 'cat': 'GreenZone'}
+    ## bairos: 43 {'map_number': 43,'cat': 'Bairos'}
 
-## Numbers
-## Areas-verdes: {'map_number': 77, 'cat': 'GreenZone'}
-## bairos: 43 {'map_number': 43,'cat': 'Bairos'}
+    descr = {
+        'map_number': 43,
+        'cat': 'Bairos'
+    }
 
-descr = {
-    'map_number': 43,
-    'cat': 'Bairos'
-}
+    dataList = []
+    for lat,long in progressbar.progressbar(coords):
+        data = request_objects_around_coordinate(lat, long, mapNumber=descr['map_number'])
+        v = 0 if data['objectIds'] is None else len(data['objectIds'])
+        ret_obj = {'type': descr['cat'], 'lat': lat, 'long': long, 'value': v, 'category': descr['cat']}
+        dataList.append(ret_obj)
 
-dataList = []
-for lat,long in progressbar.progressbar(coords):
-    data = request_objects_around_coordinate(lat, long, mapNumber=descr['map_number'])
-    v = 0 if data['objectIds'] is None else len(data['objectIds'])
-    ret_obj = {'type': descr['cat'], 'lat': lat, 'long': long, 'value': v, 'category': descr['cat']}
-    dataList.append(ret_obj)
+        #print("Len: ", len(data['objectIds']))
+        #pprint(ret_obj)
 
-    #print("Len: ", len(data['objectIds']))
-    #pprint(ret_obj)
+    fname = "POI_{}_{}.csv".format(descr['cat'], descr['cat'])
+    with open(fname, 'w', newline='') as csvfile:
+        fieldnames = ['type', 'lat', 'long', 'value', 'category']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-fname = "POI_{}_{}.csv".format(descr['cat'], descr['cat'])
-with open(fname, 'w', newline='') as csvfile:
-    fieldnames = ['type', 'lat', 'long', 'value', 'category']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for o in dataList:
+            writer.writerow(o)
 
-    writer.writeheader()
-    for o in dataList:
-        writer.writerow(o)
+        print("Writen: ", fname)
 
-    print("Writen: ", fname)
-
-print("HelloWorld")
+    print("HelloWorld")
