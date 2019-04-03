@@ -2,6 +2,8 @@ import requests
 import numpy
 import csv
 
+import json
+
 import progressbar
 from pprint import pprint
 
@@ -24,14 +26,34 @@ _DEFAULT_PARAMS = {
     # 'token': str(TOKEN)
 }
 
-def request_objects_around_coordinate(lat,long, mapNumber=77):
+def request_objects(geometry_object_str, mapNumber=77):
     req_params = _DEFAULT_PARAMS
-    req_params['geometry'] = "{}, {}".format(long, lat)
+    req_params['geometry'] = geometry_object_str
 
     url = 'https://servsig.cm-porto.pt/arcgis/rest/services/OpenData_APD/OpenData_APD/MapServer/{}/query'.format(mapNumber)
     r = requests.get(url, params=req_params)
 
     return r.json()
+
+
+def request_objects_around_coordinate(lat,long, mapNumber=77):
+    s = "{}, {}".format(long, lat)
+    return request_objects(s, mapNumber)
+
+def write_csv(category, dataList, t=None):
+    if t is None:
+        t = category
+
+    fname = "POI_{}_{}.csv".format(category, t)
+    with open(fname, 'w', newline='') as csvfile:
+        fieldnames = ['type', 'lat', 'long', 'value', 'category']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for o in dataList:
+            writer.writerow(o)
+
+        print("Writen: ", fname)
 
 if __name__ == "__main__":
     coords = []
