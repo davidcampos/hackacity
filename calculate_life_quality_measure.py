@@ -1,4 +1,4 @@
-import numpy
+from elasticsearch import Elasticsearch
 
 from Impact import Impact
 
@@ -9,6 +9,21 @@ def impact_weather_temperature(value):
         return Impact.POSITIVE.value
     else:
         return Impact.NEGATIVE.value
+
+
+def impact_weather_humidity(value):
+    if value >= 40 and value <= 69:
+        return Impact.POSITIVE.value
+    elif value >= 70 and value <= 99 or value >= 0 and value <= 39:
+        return Impact.NEGATIVE.value
+
+
+def impact_weather_pressure(value):
+    return Impact.POSITIVE.value
+
+
+def impact_weather_wind(value):
+    return Impact.POSITIVE.value
 
 
 # Category Traffic
@@ -109,6 +124,69 @@ def impact_air_no2(value):
         return Impact.BLOCKER.value
 
 
+def get_iot_average(type, lat, long, distance):
+    res = es.search(ELASTIC_INDEX_IOT, body={
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "match": {
+                            "type": type
+                        }
+                    }
+                ],
+                "filter": {
+                    "geo_distance": {
+                        "distance": distance,
+                        "location": {
+                            "lat": lat,
+                            "lon": long
+                        }
+                    }
+                }
+            }
+        },
+        "aggs": {
+            "avg_type": {"avg": {"field": "value"}}
+        }
+    })
+    return res['aggregations']['avg_type']['value']
+
+
+def is_poi_available(type, lat, long, distance):
+    res = es.search(ELASTIC_INDEX_POI, body={
+        "query": {
+            "bool": {
+                "must": [
+                    {
+                        "match": {
+                            "type": type
+                        }
+                    }
+                ],
+                "filter": {
+                    "geo_distance": {
+                        "distance": distance,
+                        "location": {
+                            "lat": lat,
+                            "lon": long
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    return len(res['hits']['hits']) > 0
+
+
+ELASTIC_URI = "http://10.250.0.239:9200"
+ELASTIC_INDEX_IOT = "hackacity-iot"
+ELASTIC_INDEX_POI = "hackacity-poi"
+
+es = Elasticsearch([ELASTIC_URI])
+
+
 def main():
     # Distances in KM
     config = {
@@ -158,22 +236,37 @@ def main():
         }
     }
 
-    # es = Elasticsearch()
-    print(impact_air_co2(500))
-    print(config['air']['distance'])
+    avg_co = get_iot_average('CO', 41.161386, -8.612680, "0.5km")
+    print(avg_co)
+
+    has_greenzone = is_poi_available('GREENZONE', 41.161386, -8.612680, "0.5km")
+    print(has_greenzone)
+
+    # for hit in res['hits']['hits']:
+    #     type = hit["_source"]['type']
+    # value = hit["_source"]['value']
+    # lat = hit["_source"]['location']['lat']
+    # lon = hit["_source"]['location']['lon']
+    #
+    # print("%s %s %s %s" % (type, value, lat, lon))
+
+    # pprint(res)
+
+    # print(impact_air_co2(500))
+    # print(config['air']['distance'])
 
     # 200mx200m
     # Left Top: 41.188843, -8.712637
     # Left Bottom: 41.131386, -8.712680
     # Right Top: 41.208026, -8.559292
     # Right Bottom: 41.135018, -8.558663
-    i = 0
-    for lat in numpy.arange(41.131386, 41.208026, 0.0018):
-        for long in numpy.arange(-8.712680, -8.558663, 0.0025):
-            i = i + 1
-            print("%s, %s" % (lat, long))
-
-    print(i)
+    # i = 0
+    # for lat in numpy.arange(41.131386, 41.208026, 0.0018):
+    #     for long in numpy.arange(-8.712680, -8.558663, 0.0025):
+    #         i = i + 1
+    #         print("%s, %s" % (lat, long))
+    #
+    # print(i)
 
 
 main()
