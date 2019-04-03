@@ -310,7 +310,7 @@ def calculate_life_quality(lat, lon):
             "lat": lat,
             "lon": lon
         },
-        "value": life_quality,
+        "value": 5 - life_quality,
         "GreenZone": greenzone,
         "School": school,
         "Market": market,
@@ -328,7 +328,7 @@ def calculate_life_quality(lat, lon):
 ELASTIC_URI = "http://10.250.0.239:9200"
 ELASTIC_INDEX_IOT = "hackacity-iot"
 ELASTIC_INDEX_POI = "hackacity-poi"
-ELASTIC_INDEX_RESULT = "hackacity-result"
+ELASTIC_INDEX_RESULT = "hackacity-result-parents"
 
 es = Elasticsearch([ELASTIC_URI])
 
@@ -336,47 +336,47 @@ es = Elasticsearch([ELASTIC_URI])
 config = {
     'air': {
         'distance': '4km',
-        'weight': 0.15
+        'weight': 0.05
     },
-    'weather': {
-        'distance': 2,
-        'weight': 0.1
-    },
-    'traffic': {
-        'distance': 3,
-        'weight': 0.1
-    },
+    # 'weather': {
+    #     'distance': 2,
+    #     'weight': 0.1
+    # },
+    # 'traffic': {
+    #     'distance': 3,
+    #     'weight': 0.1
+    # },
     'noise': {
         'distance': '1km',
-        'weight': 0.1
+        'weight': 0.05
     },
-    'transports': {
-        'distance': 1,
-        'weight': 0.1
-    },
-    'risks': {
-        'distance': 2,
-        'weight': 0.1
-    },
+    # 'transports': {
+    #     'distance': 1,
+    #     'weight': 0.1
+    # },
+    # 'risks': {
+    #     'distance': 2,
+    #     'weight': 0.1
+    # },
     'Market': {
         'distance': 0.5,
         'weight': 0.1
     },
     'School': {
         'distance': 0.5,
-        'weight': 0.15
+        'weight': 0.30
     },
     'Health': {
         'distance': 1,
-        'weight': 0.15
+        'weight': 0.1
     },
     'GreenZone': {
         'distance': 0.25,
-        'weight': 0.1
+        'weight': 0.30
     },
     'Bairros': {
         'distance': 0.1,
-        'weight': 0.25
+        'weight': 0.1
     }
 }
 
@@ -408,8 +408,8 @@ def main():
     # for lat in numpy.arange(41.131386, 41.208026, 0.0018):
     #     for lon in numpy.arange(-8.712680, -8.558663, 0.0025):
 
-    for lat in numpy.arange(41.131386, 41.208026, 0.0015):
-        for lon in numpy.arange(-8.712680, -8.558663, 0.0015):
+    for lat in numpy.arange(41.140385968610644, 41.18538597598672, 0.0010):
+        for lon in numpy.arange(-8.687680028378963, -8.5601800493896, 0.0010):
             coords.append((lat, lon))
 
     print("TOTAL: ", len(coords))

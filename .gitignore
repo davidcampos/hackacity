@@ -95,6 +95,7 @@ ENV/
 
 # PyCharm
 .idea/
+*.iml
 
 # Configuration files
 #**/config.ini
