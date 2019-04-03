@@ -75,11 +75,11 @@ if __name__ == "__main__":
             'type': 'Secundario',
             'cat': 'School'
         },
-        #{
-        #    'map_number': 69,
-        #    'type': 'Universitario',
-        #    'cat': 'School'
-        #}
+        {
+            'map_number': 69,
+            'type': 'Universitario',
+            'cat': 'College'
+        },
         {
             'map_number': 26,
             'type': 'SuperMercado',
@@ -97,7 +97,7 @@ if __name__ == "__main__":
             l0 = f['geometry']['y']
             l1 = f['geometry']['x']
 
-            ret_obj = {'type': descr['cat'], 'lat': l0, 'long': l1, 'value': 1, 'category': descr['cat']}
+            ret_obj = {'type': descr['type'], 'lat': l0, 'long': l1, 'value': 1, 'category': descr['cat']}
             dataList.append(ret_obj)
 
         print("Writting CSV")
