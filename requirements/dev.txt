@@ -3,3 +3,5 @@ pandas==0.24.2
 elasticsearch==6.3.1
 jupyter==1.0.0
 numpy==1.16.2
+progressbar2==3.39.3
+joblib==0.13.2
