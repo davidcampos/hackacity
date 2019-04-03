@@ -136,6 +136,8 @@ if __name__ == '__main__':
     #sys.exit(0)
     indexSuffix = index.lower()
 
+    #indexSuffix += "-" + category.lower()
+
     if index == "POI":
         parseCsvFile_POI(filename)
     else:
